@@ -1,4 +1,4 @@
-CREATE TABLE readers
+CREATE TABLE IF NOT EXISTS readers
 (
     id         integer primary key,
     first_name varchar(255),
@@ -6,20 +6,21 @@ CREATE TABLE readers
     username   varchar(255)
 );
 
-CREATE TABLE articles
+CREATE TABLE IF NOT EXISTS articles
 (
     guid varchar(36) primary key,
     url  text not null
 );
 
-CREATE TABLE articles_tags
+CREATE TABLE IF NOT EXISTS articles_tags
 (
     article varchar(36) not null,
     tag varchar(255) not null,
+    weight decimal(5,3) not null,
     foreign key (article) references articles (guid)
 );
 
-CREATE TABLE links_for_readers
+CREATE TABLE IF NOT EXISTS links_for_readers
 (
     guid    varchar(36) primary key,
     reader  integer     not null,
