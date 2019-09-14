@@ -1,4 +1,5 @@
 import json
+import operator
 
 
 class Profiler:
@@ -12,11 +13,11 @@ class Profiler:
         """Fills user_history and articles with data"""
         with open(path_user_history) as f:
             self.user_history = json.load(f)
-            print(self.user_history)  # Debug
+            # print(self.user_history)  # Debug
 
         with open(path_articles) as f:
             self.articles = json.load(f)
-            print(self.articles)  # Debug
+            # print(self.articles)  # Debug
 
     def create_tag_distribution_from_user_history(self):
         """Counts tags in user_history"""
@@ -30,7 +31,20 @@ class Profiler:
 
     def find_matching_articles(self, tag_distribution):
         """Searches for best matched articles comparing tags"""
+
+        articles_score = {}
+        for article in self.articles['articles']:
+            articles_score[article['url']] = 0
+            for tag_occurrence_pair in tag_distribution.items():
+                if tag_occurrence_pair[0] in article['tags']:
+                    articles_score[article['url']] += tag_occurrence_pair[1]
+
+        sorted_articles_by_score = sorted(articles_score.items(), key=operator.itemgetter(1))
+
         articles_url = []
+        for article_score_pair in sorted_articles_by_score:
+            articles_url.append(article_score_pair[0])
+
         return articles_url
 
     def print_matching_articles_urls(self, articles_url):
