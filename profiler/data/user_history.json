@@ -5,20 +5,20 @@
       {
         "url": "<url1>",
         "raw_article_text": "<text1>",
-        "tags": [
-          "a",
-          "b",
-          "c"
-        ]
+        "tags": {
+          "a": 1,
+          "b": 2,
+          "c": 3
+        }
       },
       {
         "url": "<url2>",
         "raw_article_text": "<text2>",
-        "tags": [
-          "c",
-          "d",
-          "e"
-        ]
+        "tags": {
+          "c": 3,
+          "d": 4,
+          "e": 5
+        }
       }
     ]
   }
