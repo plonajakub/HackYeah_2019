@@ -3,20 +3,20 @@
     {
       "url": "<url1>",
       "raw_article_text": "<text1>",
-      "tags": [
-        "a",
-        "b",
-        "c"
-      ]
+      "tags": {
+        "a": 1,
+        "b": 2,
+        "c": 3
+      }
     },
     {
       "url": "<url2>",
       "raw_article_text": "<text2>",
-      "tags": [
-        "b",
-        "c",
-        "d"
-      ]
+      "tags": {
+        "b": 3,
+        "c": 2,
+        "d": 4
+      }
     }
   ]
 }
