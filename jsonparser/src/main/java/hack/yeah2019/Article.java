@@ -7,6 +7,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class Articles {
-    private List<Article> articles;
+public class Article {
+    private String url;
+    private String target;
+    private List<String> tags;
 }
