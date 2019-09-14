@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.http.client.fluent.Request;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final Random random = new Random();
 
     public static void main(String[] args) throws FileNotFoundException, JsonProcessingException {
         InputStream in;
@@ -27,10 +27,19 @@ public class Main {
                 int begin = response.indexOf("{", response.indexOf("onetAds"));
                 int end = response.indexOf("};", begin) + 1;
                 String jsonInString = response.substring(begin, end);
+
                 JsonNode node = mapper.readTree(jsonInString);
                 JsonNode target = node.get("target");
+                JsonNode guid = node.get("keyvalues").get("ci");
                 ArrayNode keywords =  (ArrayNode) node.get("keywords");
-                return new Article(url, target.toString(), mapper.convertValue(keywords, ArrayList.class));
+
+                List<String> tags = mapper.convertValue(keywords, ArrayList.class);
+                Map<String, Double> tagToWeight = new HashMap<>();
+                tags.forEach(tag -> {
+                    tagToWeight.put(tag, random.nextDouble() * 5);
+                });
+
+                return new Article(url, target.toString(), guid.toString(), tagToWeight);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException();
