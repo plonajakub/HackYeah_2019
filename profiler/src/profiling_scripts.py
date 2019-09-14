@@ -1,13 +1,22 @@
+import json
+
 
 class Profiler:
 
     def __init__(self):
         # JSONs
-        user_history = None
-        articles = None
+        self.user_history = None
+        self.articles = None
 
     def parse_jsons(self, path_user_history, path_articles):
         """Fills user_history and articles with data"""
+        with open(path_user_history) as f:
+            self.user_history = json.load(f)
+            print(self.user_history)    #Debug
+
+        with open(path_articles) as f:
+            self.articles = json.load(f)
+            print(self.articles)    #Debug
 
     def create_tag_distribution_from_user_history(self):
         """Counts tags in user_history"""
