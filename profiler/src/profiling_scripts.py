@@ -37,7 +37,7 @@ class Profiler:
             articles_score[article['url']] = 0
             for tag_occurrence_pair in tag_distribution.items():
                 if tag_occurrence_pair[0] in article['tags']:
-                    articles_score[article['url']] += tag_occurrence_pair[1]
+                    articles_score[article['url']] += tag_occurrence_pair[1] # TODO add weights
 
         sorted_articles_by_score = sorted(articles_score.items(), key=operator.itemgetter(1))
 
