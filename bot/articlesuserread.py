@@ -12,18 +12,22 @@ def readerarticles(readerid):
     WHERE articles.guid = links_for_readers.article 
         AND links_for_readers.reader = %s
         AND links_for_readers.reader > 0"""
-    c = dbconn.cursor()
+    c = dbconn.cursor(buffered=True)
     c.execute(sql_user_articles, (readerid,))
 
     for guid, url in c:
-        tags = []
+        tags = {}
 
-        c.execute("SELECT tag, weight FROM articles_tags WHERE article = %s", (guid,))
-        for tag, weight in c:
-            tags.append({tag: float(weight)})
+        cx = dbconn.cursor()
+        cx.execute("SELECT tag, weight FROM articles_tags WHERE article = %s", (guid,))
+        for tag, weight in cx:
+            # tags.append({tag: float(weight)})
+            tags[tag] = float(weight)
 
         visited_sites.append({"url": url, "tags": tags})
+        cx.close()
 
+    c.close()
     return {"user_id": readerid, "visited_sites": visited_sites}
 
 
