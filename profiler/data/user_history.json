@@ -1,0 +1,25 @@
+{
+  "user_history": {
+    "user_id": 1,
+    "visited_sites": [
+      {
+        "url": "<url1>",
+        "raw_article_text": "<text1>",
+        "tags": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      {
+        "url": "<url2>",
+        "raw_article_text": "<text2>",
+        "tags": [
+          "c",
+          "d",
+          "e"
+        ]
+      }
+    ]
+  }
+}
