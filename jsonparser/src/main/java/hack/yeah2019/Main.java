@@ -39,7 +39,7 @@ public class Main {
                     tagToWeight.put(tag, random.nextDouble() * 5);
                 });
 
-                return new Article(url, target.toString(), guid.toString(), tagToWeight);
+                return new Article(url, target.asText(), guid.asText(), tagToWeight);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException();
