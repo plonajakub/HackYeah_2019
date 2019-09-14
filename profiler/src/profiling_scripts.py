@@ -12,15 +12,20 @@ class Profiler:
         """Fills user_history and articles with data"""
         with open(path_user_history) as f:
             self.user_history = json.load(f)
-            print(self.user_history)    #Debug
+            print(self.user_history)  # Debug
 
         with open(path_articles) as f:
             self.articles = json.load(f)
-            print(self.articles)    #Debug
+            print(self.articles)  # Debug
 
     def create_tag_distribution_from_user_history(self):
         """Counts tags in user_history"""
         tag_dictionary = {}
+        for visited_site in self.user_history['user_history']['visited_sites']:
+            for tag in visited_site['tags']:
+                if tag not in tag_dictionary:
+                    tag_dictionary[tag] = 0
+                tag_dictionary[tag] = tag_dictionary[tag] + 1
         return tag_dictionary
 
     def find_matching_articles(self, tag_distribution):
@@ -38,4 +43,3 @@ class Profiler:
         tag_distribution = self.create_tag_distribution_from_user_history()
         articles_url = self.find_matching_articles(tag_distribution)
         self.print_matching_articles_urls(articles_url)
-
