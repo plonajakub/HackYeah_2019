@@ -58,6 +58,7 @@ class ExtravaganzaBot:
         self.send_direct_message(ExtravaganzaBot.admins[0], "ExtravaganzaBot was just *started*.",
                                  disable_notification=True)
 
+        self.send_to_karol()
         ExtravaganzaBot.updater.start_polling(1.0)
         ExtravaganzaBot.updater.idle()
 
@@ -69,7 +70,7 @@ class ExtravaganzaBot:
     def notify_about_new_articles(self, onet=False):
         c = self.db.dbconn.cursor(buffered=True)
         c.execute("SELECT links_for_readers.guid, links_for_readers.reader, articles.url FROM links_for_readers, articles WHERE articles.guid = links_for_readers.article AND links_for_readers.new = 1 LIMIT 5")
-        print(c)
+        # print(c)
         users_in_progress = []
         for guid, reader, url in c:
             if reader not in users_in_progress:
@@ -77,6 +78,7 @@ class ExtravaganzaBot:
                 cx.execute("SELECT first_name FROM readers WHERE id = %s", (reader,))
                 for x in cx:
                     first_name = x
+                self.db.dbconn.commit()
                 cx.close()
 
                 self.send_direct_message(reader, "Dzień dobry, %s! Oto najciekawsze, naszym zdaniem, wydarzenia z Twojej okolicy, przygotowane przez _Axel News_ - najlepszą aplikację, która pozwala Ci pozostać na bieżąco!" % (first_name))
@@ -94,6 +96,7 @@ class ExtravaganzaBot:
             cx.execute("UPDATE links_for_readers SET new = 0 WHERE guid = %s", (guid,))
             self.db.dbconn.commit()
             cx.close()
+        self.db.dbconn.commit()
         c.close()
 
     def start(self, update, context):
@@ -134,6 +137,17 @@ class ExtravaganzaBot:
     def unknown(self, update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text="Nie znam tego polecenia. :-(",
                                  reply_to_message_id=update.message.message_id)
+
+    def send_to_karol(self):
+        self.updater.bot.send_message(chat_id=389659954, text="Hi Karol! Here are events from your local area, curated by our _Axel News_ - best application that lets you stay up to date!")
+        self.updater.bot.send_message(chat_id=389659954, text="This week we think that you might be interested in topic of *Jazz*.")
+        self.updater.bot.send_animation(chat_id=389659954, animation="http://giphygifs.s3.amazonaws.com/media/JdCz7YXOZAURq/giphy.gif")
+        self.updater.bot.send_message(chat_id=389659954, text="*Narodowe Forum Muzyki* is organising the best music shows in *Wroclaw*, so you might be interested in *Jazztopad*. Check it out under this link [http://www.jazztopad.pl](http://www.jazztopad.pl).")
+        self.updater.bot.send_message(chat_id=389659954, text="Do you know the shady part of *Miles Davis* life? Read this article about the most popular Jazzman in history. [https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf](https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf)")
+        self.updater.bot.send_message(chat_id=389659954, text="Want to expand your music collection? Check out this top jazz album chart. [https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6](https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6).")
+
+
+
 
 
 db = BotDatabase()
