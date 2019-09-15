@@ -1,10 +1,11 @@
-from telegram import ParseMode
+from telegram import ParseMode, ChatAction
 from telegram.ext import Updater, Filters, CommandHandler, MessageHandler
 import logging
 import mysql.connector as mariadb
 from profiler.src import profiling_scripts as ps
 from bot import articlesuserread, importproposedarticles
 import json
+import time
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -66,7 +67,7 @@ class ExtravaganzaBot:
 
     def notify_about_new_articles(self, onet=False):
         c = self.db.dbconn.cursor(buffered=True)
-        c.execute("SELECT links_for_readers.guid, links_for_readers.reader, articles.url FROM links_for_readers, articles WHERE articles.guid = links_for_readers.article AND links_for_readers.new = 1")
+        c.execute("SELECT links_for_readers.guid, links_for_readers.reader, articles.url FROM links_for_readers, articles WHERE articles.guid = links_for_readers.article AND links_for_readers.new = 1 LIMIT 5")
         print(c)
         users_in_progress = []
         for guid, reader, url in c:
@@ -76,13 +77,16 @@ class ExtravaganzaBot:
                 for x in cx:
                     first_name = x
                 cx.close()
+
                 self.send_direct_message(reader, "Dzień dobry, %s! Oto najciekawsze, naszym zdaniem, wydarzenia z Twojej okolicy, przygotowane przez _Axel News_ - najlepszą aplikację, która pozwala Ci pozostać na bieżąco!" % (first_name))
                 users_in_progress.append(reader)
-                if onet:
-                    msg = "[%s](%s)" % (url, url)
-                else:
-                    msg = "[http://frappe.iiar.pwr.edu.pl:5000/%s](http://frappe.iiar.pwr.edu.pl:5000/%s)" % (guid, guid)
+            if onet:
+                msg = "[%s](%s)" % (url, url)
+            else:
+                msg = "[http://frappe.iiar.pwr.edu.pl:5000/%s](http://frappe.iiar.pwr.edu.pl:5000/%s)" % (guid, guid)
 
+            self.updater.bot.send_chat_action(chat_id=reader, action=ChatAction.TYPING)
+            time.sleep(0.5)
             self.send_direct_message(reader, msg)
 
             cx = self.db.dbconn.cursor()
