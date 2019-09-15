@@ -37,18 +37,41 @@ class ExtravaganzaBot:
         start_handler = CommandHandler('start', self.start)
         ExtravaganzaBot.dispatcher.add_handler(start_handler)
 
+        notify_handler = CommandHandler('notify', self.notify)
+        ExtravaganzaBot.dispatcher.add_handler(notify_handler)
+
         unknown_handler = MessageHandler(Filters.command, self.unknown)
         ExtravaganzaBot.dispatcher.add_handler(unknown_handler)
 
         self.send_direct_message(ExtravaganzaBot.admins[0], "ExtravaganzaBot was just *started*.",
                                  disable_notification=True)
+
         ExtravaganzaBot.updater.start_polling(1.0)
         ExtravaganzaBot.updater.idle()
 
-    def send_direct_message(self, chat_id, message, disable_notification=False):
-        self.updater.bot.send_message(chat_id, message, parse_mode=ParseMode.MARKDOWN,
+    def send_direct_message(self, chat_id, message, parse_mode=ParseMode.MARKDOWN, disable_notification=False):
+        self.updater.bot.send_message(chat_id, message, parse_mode=parse_mode,
                                       disable_notification=disable_notification)
         logging.info("Sent message „%s” to chat %s." % (message, chat_id))
+
+    def notify_about_new_articles(self):
+        c = self.db.dbconn.cursor(buffered=True)
+        c.execute("SELECT guid, reader FROM links_for_readers WHERE new = 1")
+        print(c)
+        users_in_progress = []
+        for guid, reader in c:
+            if reader not in users_in_progress:
+                self.send_direct_message(reader, "Dzień dobry! Oto nowe artykuły dla Ciebie.")
+                users_in_progress.append(reader)
+            self.send_direct_message(reader,
+                                     "<a href=\"http://frappe.iiar.pwr.edu.pl:5000/%s\">http://frappe.iiar.pwr.edu.pl:5000/%s</a>" % (
+                                     guid, guid),
+                                     parse_mode=ParseMode.HTML)
+
+            cx = self.db.dbconn.cursor()
+            cx.execute("UPDATE links_for_readers SET new = 0 WHERE guid = %s", (guid,))
+            self.db.dbconn.commit()
+        c.close()
 
     def start(self, update, context):
         if update.message.chat.type == 'private':
@@ -63,10 +86,16 @@ class ExtravaganzaBot:
         self.db.new_reader(update.message.chat_id, update.message.chat.first_name, update.message.chat.last_name,
                            title)
 
+    def notify(self, update, context):
+        if update.message.chat_id in ExtravaganzaBot.admins:
+            context.bot.send_message(chat_id=update.message.chat_id, text="Uruchomiono powiadamianie.")
+            self.notify_about_new_articles()
+        else:
+            self.unknown(update, context)
+
     def unknown(self, update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text="Nie znam tego polecenia. :-(",
                                  reply_to_message_id=update.message.message_id)
-        logging.info("Chat: %s" % update.message.chat_id)
 
 
 db = BotDatabase()

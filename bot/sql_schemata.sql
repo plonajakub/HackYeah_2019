@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS links_for_readers
     reader  integer     not null,
     article varchar(36) not null,
     visited integer     not null default 0, -- >1 -- link visited more than once. :)
+    new     integer     not null default 1,
     foreign key (reader) references readers (id),
     foreign key (article) references articles (guid)
 );
