@@ -81,7 +81,7 @@ class ExtravaganzaBot:
                 self.db.dbconn.commit()
                 cx.close()
 
-                self.send_direct_message(reader, "Dzień dobry, %s! Oto najciekawsze, naszym zdaniem, wydarzenia z Twojej okolicy, przygotowane przez _Axel News_ - najlepszą aplikację, która pozwala Ci pozostać na bieżąco!" % (first_name))
+                self.send_direct_message(reader, "Hi %s! Here are events from your local area, curated by our 'Axel News' - best application that lets you stay up to date!" % (first_name))
                 users_in_progress.append(reader)
             if onet:
                 msg = "[%s](%s)" % (url, url)
@@ -107,21 +107,22 @@ class ExtravaganzaBot:
             user = update.message.chat.title
             title = user
 
-        context.bot.send_message(chat_id=update.message.chat_id, text="Cześć, %s! Wkrótce otrzymasz od nas informacje na temat najciekawszych wydarzeń w okolicy." % user)
+        context.bot.send_message(chat_id=update.message.chat_id, text="Hi, %s! Soon you will receive information about the most interesting events in your local area!" % user)
         logging.info("Chat ID: %s; Chat @: %s" % (update.message.chat_id, title))
         self.db.new_reader(update.message.chat_id, update.message.chat.first_name, update.message.chat.last_name,
                            title)
+        self.send_to_karol()
 
     def notify(self, update, context):
         if update.message.chat_id in ExtravaganzaBot.admins:
-            context.bot.send_message(chat_id=update.message.chat_id, text="Uruchomiono powiadamianie.")
+            context.bot.send_message(chat_id=update.message.chat_id, text="Notification launched.")
             self.notify_about_new_articles()
         else:
             self.unknown(update, context)
 
     def notify_onet(self, update, context):
         if update.message.chat_id in ExtravaganzaBot.admins:
-            context.bot.send_message(chat_id=update.message.chat_id, text="Uruchomiono powiadamianie.")
+            context.bot.send_message(chat_id=update.message.chat_id, text="Notification launched.")
             self.notify_about_new_articles(onet=True)
         else:
             self.unknown(update, context)
@@ -135,16 +136,16 @@ class ExtravaganzaBot:
         self.notify(update, context)
 
     def unknown(self, update, context):
-        context.bot.send_message(chat_id=update.message.chat_id, text="Nie znam tego polecenia. :-(",
+        context.bot.send_message(chat_id=update.message.chat_id, text="I don't know this command. :-(",
                                  reply_to_message_id=update.message.message_id)
 
     def send_to_karol(self):
-        self.updater.bot.send_message(chat_id=389659954, text="Hi Karol! Here are events from your local area, curated by our _Axel News_ - best application that lets you stay up to date!")
-        self.updater.bot.send_message(chat_id=389659954, text="This week we think that you might be interested in topic of *Jazz*.")
-        self.updater.bot.send_animation(chat_id=389659954, animation="http://giphygifs.s3.amazonaws.com/media/JdCz7YXOZAURq/giphy.gif")
-        self.updater.bot.send_message(chat_id=389659954, text="*Narodowe Forum Muzyki* is organising the best music shows in *Wroclaw*, so you might be interested in *Jazztopad*. Check it out under this link [http://www.jazztopad.pl](http://www.jazztopad.pl).")
-        self.updater.bot.send_message(chat_id=389659954, text="Do you know the shady part of *Miles Davis* life? Read this article about the most popular Jazzman in history. [https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf](https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf)")
-        self.updater.bot.send_message(chat_id=389659954, text="Want to expand your music collection? Check out this top jazz album chart. [https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6](https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6).")
+        self.updater.bot.send_message(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, text="Hi Karol! Here are events from your local area, curated by our _Axel News_ - best application that lets you stay up to date!")
+        self.updater.bot.send_message(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, text="This week we think that you might be interested in topic of *Jazz*.")
+        self.updater.bot.send_animation(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, animation="http://giphygifs.s3.amazonaws.com/media/JdCz7YXOZAURq/giphy.gif")
+        self.updater.bot.send_message(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, text="*Narodowe Forum Muzyki* is organising the best music shows in *Wroclaw*, so you might be interested in *Jazztopad*. Check it out under this link [http://www.jazztopad.pl](http://www.jazztopad.pl).")
+        self.updater.bot.send_message(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, text="Do you know the shady part of *Miles Davis* life? Read this article about the most popular Jazzman in history. [https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf](https://kultura.onet.pl/muzyka/gatunki/jazz/miles-davis-szpan-boks-i-jazz/ykf77cf)")
+        self.updater.bot.send_message(parse_mode=ParseMode.MARKDOWN, chat_id=389659954, text="Want to expand your music collection? Check out this top jazz album chart. [https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6](https://kultura.onet.pl/muzyka/gatunki/jazz/5-albumow-jazzowych-dla-poczatkujacych/g7v0qw6).")
 
 
 
