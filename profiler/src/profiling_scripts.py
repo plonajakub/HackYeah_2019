@@ -64,11 +64,12 @@ class Profiler:
         match_result = {'user_id': self.user_history['user_history']['user_id'], 'sorted_urls': []}
         for i in range(5):
             match_result['sorted_urls'].append(articles_url[i])
-        print(str(match_result).replace("\'", "\""))
+        return match_result
+        # print(str(match_result).replace("\'", "\""))
 
     def run(self, user_history, articles):
         """Algorithm"""
         self.load_jsons(user_history, articles)
         tag_distribution = self.create_tag_distribution_from_user_history()
         articles_url = self.find_matching_articles(tag_distribution)
-        self.print_matching_articles_urls(articles_url)
+        return self.print_matching_articles_urls(articles_url)

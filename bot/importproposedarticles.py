@@ -5,6 +5,7 @@ dbconn = mariadb.connect(user='hackyeah', password='hackyeah', database='hackyea
 
 
 def import_proposed_articles(articles):
+    print(articles)
     userid = articles['user_id']
     format_strings = ','.join(['%s'] * len(articles['sorted_urls']))
     sql_get_guids = "SELECT guid FROM articles WHERE url IN (%s)"
@@ -12,7 +13,7 @@ def import_proposed_articles(articles):
     c.execute(sql_get_guids % format_strings, articles['sorted_urls'])
     for guid in c:
         cx = dbconn.cursor()
-        cx.execute("INSERT INTO links_for_readers VALUES (uuid(), %s, %s, 0)", (userid, str(guid[0])));
+        cx.execute("INSERT INTO links_for_readers (guid, reader, article)  VALUES (uuid(), %s, %s)", (userid, str(guid[0])))
         dbconn.commit()
         cx.close()
 

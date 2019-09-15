@@ -2,6 +2,9 @@ from telegram import ParseMode
 from telegram.ext import Updater, Filters, CommandHandler, MessageHandler
 import logging
 import mysql.connector as mariadb
+from profiler.src import profiling_scripts as ps
+from bot import articlesuserread, importproposedarticles
+import json
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -29,7 +32,8 @@ class ExtravaganzaBot:
 
     # 297962379 - Przemek
     # 545636484 - Sergiusz
-    admins = [297962379, 545636484]
+    # 389659954
+    admins = [297962379, 545636484, 389659954]
 
     def __init__(self, dbconn: BotDatabase):
         self.db = dbconn
@@ -42,6 +46,9 @@ class ExtravaganzaBot:
 
         notify_onet_handler = CommandHandler('notifyonet', self.notify_onet)
         ExtravaganzaBot.dispatcher.add_handler(notify_onet_handler)
+
+        notify_one_hour_later = CommandHandler('onehourlater', self.one_hour_later)
+        ExtravaganzaBot.dispatcher.add_handler(notify_one_hour_later)
 
         unknown_handler = MessageHandler(Filters.command, self.unknown)
         ExtravaganzaBot.dispatcher.add_handler(unknown_handler)
@@ -110,6 +117,14 @@ class ExtravaganzaBot:
             self.notify_about_new_articles(onet=True)
         else:
             self.unknown(update, context)
+
+    def one_hour_later(self, update, context):
+        user_history = articlesuserread.readerarticles(update.message.chat_id)
+        with open(r"profiler/data/articles.json") as x:
+            articles = json.load(x)
+        p = ps.Profiler().run(user_history, articles)
+        importproposedarticles.import_proposed_articles(p)
+        self.notify(update, context)
 
     def unknown(self, update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text="Nie znam tego polecenia. :-(",
