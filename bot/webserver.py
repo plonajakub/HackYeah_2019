@@ -2,6 +2,7 @@ import mysql.connector as mariadb
 from flask import Flask, redirect
 
 dbconn = mariadb.connect(user='hackyeah', password='hackyeah', database='hackyeah')
+dbconn.autocommit = True
 app = Flask(__name__)
 
 
