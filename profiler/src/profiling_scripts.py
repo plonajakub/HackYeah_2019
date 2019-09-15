@@ -19,6 +19,20 @@ class Profiler:
             self.articles = json.load(f)
             # print(self.articles)  # Debug
 
+        self.exclude_user_history_from_articles()
+
+    def exclude_user_history_from_articles(self):
+        # print(len(self.articles['articles'])) # Debug
+        history_urls = []
+        for site in self.user_history['user_history']['visited_sites']:
+            history_urls.append(site['url'])
+
+        for article in self.articles['articles']:
+            if article['url'] in history_urls:
+                self.articles['articles'].remove(article)
+
+        # print(len(self.articles['articles'])) # Debug
+
     def create_tag_distribution_from_user_history(self):
         """Counts tags in user_history"""
         tag_dictionary = {}
