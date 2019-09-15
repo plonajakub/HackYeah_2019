@@ -15,6 +15,7 @@ class BotDatabase:
 
     def __init__(self):
         self.dbconn = mariadb.connect(user='hackyeah', password='hackyeah', database='hackyeah')
+        self.dbconn.autocommit = True
 
     def new_reader(self, id, first_name, last_name, username):
         sql_insert_new_reader = """REPLACE INTO readers VALUES (%s, %s, %s, %s)""".format(id, first_name, last_name,
