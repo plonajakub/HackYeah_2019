@@ -40,6 +40,9 @@ class ExtravaganzaBot:
         notify_handler = CommandHandler('notify', self.notify)
         ExtravaganzaBot.dispatcher.add_handler(notify_handler)
 
+        notify_onet_handler = CommandHandler('notifyonet', self.notify_onet)
+        ExtravaganzaBot.dispatcher.add_handler(notify_onet_handler)
+
         unknown_handler = MessageHandler(Filters.command, self.unknown)
         ExtravaganzaBot.dispatcher.add_handler(unknown_handler)
 
@@ -54,23 +57,31 @@ class ExtravaganzaBot:
                                       disable_notification=disable_notification)
         logging.info("Sent message „%s” to chat %s." % (message, chat_id))
 
-    def notify_about_new_articles(self):
+    def notify_about_new_articles(self, onet=False):
         c = self.db.dbconn.cursor(buffered=True)
-        c.execute("SELECT guid, reader FROM links_for_readers WHERE new = 1")
+        c.execute("SELECT links_for_readers.guid, links_for_readers.reader, articles.url FROM links_for_readers, articles WHERE articles.guid = links_for_readers.article AND links_for_readers.new = 1")
         print(c)
         users_in_progress = []
-        for guid, reader in c:
+        for guid, reader, url in c:
             if reader not in users_in_progress:
-                self.send_direct_message(reader, "Dzień dobry! Oto nowe artykuły dla Ciebie.")
+                cx = self.db.dbconn.cursor()
+                cx.execute("SELECT first_name FROM readers WHERE id = %s", (reader,))
+                for x in cx:
+                    first_name = x
+                cx.close()
+                self.send_direct_message(reader, "Dzień dobry, %s! Oto najciekawsze, naszym zdaniem, wydarzenia z Twojej okolicy, przygotowane przez _Axel News_ - najlepszą aplikację, która pozwala Ci pozostać na bieżąco!" % (first_name))
                 users_in_progress.append(reader)
-            self.send_direct_message(reader,
-                                     "<a href=\"http://frappe.iiar.pwr.edu.pl:5000/%s\">http://frappe.iiar.pwr.edu.pl:5000/%s</a>" % (
-                                     guid, guid),
-                                     parse_mode=ParseMode.HTML)
+                if onet:
+                    msg = "[%s](%s)" % (url, url)
+                else:
+                    msg = "[http://frappe.iiar.pwr.edu.pl:5000/%s](http://frappe.iiar.pwr.edu.pl:5000/%s)" % (guid, guid)
+
+            self.send_direct_message(reader, msg)
 
             cx = self.db.dbconn.cursor()
             cx.execute("UPDATE links_for_readers SET new = 0 WHERE guid = %s", (guid,))
             self.db.dbconn.commit()
+            cx.close()
         c.close()
 
     def start(self, update, context):
@@ -81,7 +92,7 @@ class ExtravaganzaBot:
             user = update.message.chat.title
             title = user
 
-        context.bot.send_message(chat_id=update.message.chat_id, text="Cześć, %s!" % user)
+        context.bot.send_message(chat_id=update.message.chat_id, text="Cześć, %s! Wkrótce otrzymasz od nas informacje na temat najciekawszych wydarzeń w okolicy." % user)
         logging.info("Chat ID: %s; Chat @: %s" % (update.message.chat_id, title))
         self.db.new_reader(update.message.chat_id, update.message.chat.first_name, update.message.chat.last_name,
                            title)
@@ -90,6 +101,13 @@ class ExtravaganzaBot:
         if update.message.chat_id in ExtravaganzaBot.admins:
             context.bot.send_message(chat_id=update.message.chat_id, text="Uruchomiono powiadamianie.")
             self.notify_about_new_articles()
+        else:
+            self.unknown(update, context)
+
+    def notify_onet(self, update, context):
+        if update.message.chat_id in ExtravaganzaBot.admins:
+            context.bot.send_message(chat_id=update.message.chat_id, text="Uruchomiono powiadamianie.")
+            self.notify_about_new_articles(onet=True)
         else:
             self.unknown(update, context)
 
