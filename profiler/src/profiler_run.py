@@ -8,4 +8,4 @@ with open('../data/articles.json') as f:
     articles = json.load(f)
 
 profiler = ps.Profiler()
-profiler.run(user_history, articles)
+print(profiler.run(user_history, articles))
