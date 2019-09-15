@@ -9,16 +9,10 @@ class Profiler:
         self.user_history = None
         self.articles = None
 
-    def parse_jsons(self, path_user_history, path_articles):
+    def load_jsons(self, user_history, articles):
         """Fills user_history and articles with data"""
-        with open(path_user_history) as f:
-            self.user_history = json.load(f)
-            # print(self.user_history)  # Debug
-
-        with open(path_articles) as f:
-            self.articles = json.load(f)
-            # print(self.articles)  # Debug
-
+        self.user_history = user_history
+        self.articles = articles
         self.exclude_user_history_from_articles()
 
     def exclude_user_history_from_articles(self):
@@ -72,9 +66,9 @@ class Profiler:
             match_result['sorted_urls'].append(articles_url[i])
         print(str(match_result).replace("\'", "\""))
 
-    def run(self, path_user_history, path_articles):
+    def run(self, user_history, articles):
         """Algorithm"""
-        self.parse_jsons(path_user_history, path_articles)
+        self.load_jsons(user_history, articles)
         tag_distribution = self.create_tag_distribution_from_user_history()
         articles_url = self.find_matching_articles(tag_distribution)
         self.print_matching_articles_urls(articles_url)
