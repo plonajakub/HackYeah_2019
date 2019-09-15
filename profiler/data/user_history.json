@@ -1,23 +1,43 @@
 {
   "user_history": {
-    "user_id": 1,
+    "user_id": 297962379,
     "visited_sites": [
       {
-        "url": "<url1>",
-        "raw_article_text": "<text1>",
+        "url": "https://kultura.onet.pl/muzyka/gatunki/jazz/w-warszawie-pozegnano-marka-karewicza-artyste-fotografika/w92wwms",
         "tags": {
-          "a": 1,
-          "b": 2,
-          "c": 3
+          "detalss2": 0.746,
+          "jazz": 3.23,
+          "marek-karewicz": 0.49,
+          "najnowsze": 1.512,
+          "detal": 2.167,
+          "newkm": 3.723
         }
       },
       {
-        "url": "<url2>",
-        "raw_article_text": "<text2>",
+        "url": "https://wiadomosci.onet.pl/swiat/erdogan-chce-wiecej-pieniedzy-od-ue-by-zatrzymac-uchodzcow-w-turcji/jh32bnb",
         "tags": {
-          "c": 3,
-          "d": 4,
-          "e": 5
+          "usa": 4.612,
+          "newdetalads": 2.47,
+          "iran": 0.501,
+          "syria": 3.416,
+          "left1": 0.578,
+          "detal": 1.265,
+          "turcja": 2.886,
+          "detalss2": 3.353,
+          "unia-europejska": 3.833,
+          "swiat": 0.198,
+          "rosja": 0.244,
+          "ust": 0.726,
+          "recep-tayyip-erdogan": 4.672
+        }
+      },
+      {
+        "url": "https://kobieta.onet.pl/zdrowie/zycie-i-zdrowie/elektroniczny-papieros-czy-jest-lepszy-od-standardowej-paczki/6q232yw",
+        "tags": {
+          "zycie-i-zdrowie": 4.739,
+          "ust": 4.729,
+          "detal": 1.211,
+          "4_0_1": 2.928
         }
       }
     ]
