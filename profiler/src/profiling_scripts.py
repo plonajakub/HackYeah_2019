@@ -61,8 +61,13 @@ class Profiler:
     def print_matching_articles_urls(self, articles_url):
         """Export URLs for matched articles to the STDOUT"""
         match_result = {'user_id': self.user_history['user_history']['user_id'], 'sorted_urls': []}
-        for i in range(5):
-            match_result['sorted_urls'].append(articles_url[i])
+        i = 0
+        for article_url in articles_url:
+            if article_url not in match_result['sorted_urls']:
+                match_result['sorted_urls'].append(article_url)
+                i += 1
+            if i == 5:
+                break
         return match_result
         # print(str(match_result).replace("\'", "\""))
 
