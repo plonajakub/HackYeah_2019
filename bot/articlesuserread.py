@@ -28,7 +28,7 @@ def readerarticles(readerid):
         cx.close()
 
     c.close()
-    return {"user_id": readerid, "visited_sites": visited_sites}
+    return {"user_history":{"user_id": readerid, "visited_sites": visited_sites}}
 
 
 if __name__ == '__main__':
